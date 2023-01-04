@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GerenciadorFolhaPagamento_Domain\GerenciadorFolhaPagamento_Domain.csproj" />
+    <ProjectReference Include="..\GerenciadorFolhaPagamento_Infrastructure\GerenciadorFolhaPagamento_Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

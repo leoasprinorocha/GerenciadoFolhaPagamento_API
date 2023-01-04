@@ -17,7 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorFolhaPagamento_Domain", "GerenciadorFolhaPagamento_Domain\GerenciadorFolhaPagamento_Domain.csproj", "{77597170-DAEF-4317-AD47-C7CEF65EADE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorFolhaPagamento_Infrastructure", "GerenciadorFolhaPagamento_Infrastructure\GerenciadorFolhaPagamento_Infrastructure.csproj", "{17B46082-2228-46CC-A91A-FF9E9AE1AA87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorFolhaPagamento_Infrastructure", "GerenciadorFolhaPagamento_Infrastructure\GerenciadorFolhaPagamento_Infrastructure.csproj", "{17B46082-2228-46CC-A91A-FF9E9AE1AA87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorFolhaPagamento_Data", "GerenciadorFolhaPagamento_Data\GerenciadorFolhaPagamento_Data.csproj", "{9145C11F-4491-48DA-B004-D49466211D5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorFolhaPagamento_Application", "GerenciadorFolhaPagamento_Application\GerenciadorFolhaPagamento_Application.csproj", "{F574F3F8-767C-4744-B12C-74F56A781896}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,14 @@ Global
 		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9145C11F-4491-48DA-B004-D49466211D5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9145C11F-4491-48DA-B004-D49466211D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9145C11F-4491-48DA-B004-D49466211D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9145C11F-4491-48DA-B004-D49466211D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F574F3F8-767C-4744-B12C-74F56A781896}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F574F3F8-767C-4744-B12C-74F56A781896}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F574F3F8-767C-4744-B12C-74F56A781896}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F574F3F8-767C-4744-B12C-74F56A781896}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +57,8 @@ Global
 		{123242BE-B646-488B-8CDC-EEEDD6C8BCC7} = {3EFEC676-729E-462C-8B06-2BF9263AE7A9}
 		{77597170-DAEF-4317-AD47-C7CEF65EADE0} = {B072CA32-5FF7-4EBB-B50B-553271F33445}
 		{17B46082-2228-46CC-A91A-FF9E9AE1AA87} = {EB3972EE-F92D-4E6E-8C4B-02DB3E105551}
+		{9145C11F-4491-48DA-B004-D49466211D5D} = {90EB3B62-BF4D-4DE4-8278-9B633F219C4B}
+		{F574F3F8-767C-4744-B12C-74F56A781896} = {85361593-E904-4FDD-84A1-9ACCE4FDD7E0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FD37F7D3-FFF8-43AE-9785-BA5E69AD490E}
