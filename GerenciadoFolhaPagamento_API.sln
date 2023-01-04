@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadoFolhaPagamento_API", "GerenciadoFolhaPagamento_API\GerenciadoFolhaPagamento_API.csproj", "{123242BE-B646-488B-8CDC-EEEDD6C8BCC7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{3EFEC676-729E-462C-8B06-2BF9263AE7A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{85361593-E904-4FDD-84A1-9ACCE4FDD7E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{B072CA32-5FF7-4EBB-B50B-553271F33445}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{90EB3B62-BF4D-4DE4-8278-9B633F219C4B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{EB3972EE-F92D-4E6E-8C4B-02DB3E105551}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerenciadorFolhaPagamento_Domain", "GerenciadorFolhaPagamento_Domain\GerenciadorFolhaPagamento_Domain.csproj", "{77597170-DAEF-4317-AD47-C7CEF65EADE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GerenciadorFolhaPagamento_Infrastructure", "GerenciadorFolhaPagamento_Infrastructure\GerenciadorFolhaPagamento_Infrastructure.csproj", "{17B46082-2228-46CC-A91A-FF9E9AE1AA87}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{123242BE-B646-488B-8CDC-EEEDD6C8BCC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{123242BE-B646-488B-8CDC-EEEDD6C8BCC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{123242BE-B646-488B-8CDC-EEEDD6C8BCC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{123242BE-B646-488B-8CDC-EEEDD6C8BCC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77597170-DAEF-4317-AD47-C7CEF65EADE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77597170-DAEF-4317-AD47-C7CEF65EADE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77597170-DAEF-4317-AD47-C7CEF65EADE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77597170-DAEF-4317-AD47-C7CEF65EADE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B46082-2228-46CC-A91A-FF9E9AE1AA87}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{123242BE-B646-488B-8CDC-EEEDD6C8BCC7} = {3EFEC676-729E-462C-8B06-2BF9263AE7A9}
+		{77597170-DAEF-4317-AD47-C7CEF65EADE0} = {B072CA32-5FF7-4EBB-B50B-553271F33445}
+		{17B46082-2228-46CC-A91A-FF9E9AE1AA87} = {EB3972EE-F92D-4E6E-8C4B-02DB3E105551}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD37F7D3-FFF8-43AE-9785-BA5E69AD490E}
+	EndGlobalSection
+EndGlobal
