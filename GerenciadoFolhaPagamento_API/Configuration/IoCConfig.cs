@@ -1,5 +1,7 @@
-﻿using GerenciadorFolhaPagamento_Data.Repositories;
+﻿using GerenciadorFolhaPagamento_Application.Applications;
+using GerenciadorFolhaPagamento_Data.Repositories;
 using GerenciadorFolhaPagamento_Domain.Builders;
+using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Builders;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Repositories;
 using GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig;
@@ -13,6 +15,7 @@ namespace GerenciadorFolhaPagamento_API.Configuration
         {
             services.AddHelpersService();
             services.AddRepositoriesServices();
+            services.AddApplicationServices();
             return services;
         }
 
@@ -22,15 +25,24 @@ namespace GerenciadorFolhaPagamento_API.Configuration
             services.AddScoped<DbSession>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IFuncionarioBuilder, FuncionarioBuilder>();
+            services.AddScoped<IDepartamentoBuilder, DepartamentoBuilder>();
 
             return services;
         }
 
         private static IServiceCollection AddRepositoriesServices(this IServiceCollection services)
         {
-            
-            services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 
+            services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
+            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+
+            return services;
+        }
+
+        private static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddScoped<IFuncionarioApplication, FuncionarioApplication>();
+            services.AddScoped<IDepartamentoApplication, DepartamentoApplication>();
             return services;
         }
 

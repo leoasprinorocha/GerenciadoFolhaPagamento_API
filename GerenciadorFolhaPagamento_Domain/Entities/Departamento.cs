@@ -10,11 +10,6 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
 
         public string NomeDepartamento { get; set; }
 
-        public bool VerificaSeDepartamentoJaExiste(string nomeDepartamento, IList<string> nomesJaExistentes)
-        {
-            if (nomesJaExistentes.Contains(nomeDepartamento))
-                return true;
-            return false;
-        }
+        
     }
 }

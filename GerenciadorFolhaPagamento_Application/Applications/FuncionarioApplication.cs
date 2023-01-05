@@ -18,8 +18,8 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
         public FuncionarioApplication(IUnitOfWork unitOfWork, IFuncionarioRepository funcionarioRepository, IFuncionarioBuilder funcionarioBuilder)
         {
-            this._unitOfWork = unitOfWork;
-            this._funcionarioRepository = funcionarioRepository;
+            _unitOfWork = unitOfWork;
+            _funcionarioRepository = funcionarioRepository;
             _funcionarioBuilder = funcionarioBuilder;
         }
 

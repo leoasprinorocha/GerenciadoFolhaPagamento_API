@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GerenciadorFolhaPagamento_Application\GerenciadorFolhaPagamento_Application.csproj" />
     <ProjectReference Include="..\GerenciadorFolhaPagamento_Data\GerenciadorFolhaPagamento_Data.csproj" />
     <ProjectReference Include="..\GerenciadorFolhaPagamento_Infrastructure\GerenciadorFolhaPagamento_Infrastructure.csproj" />
   </ItemGroup>
