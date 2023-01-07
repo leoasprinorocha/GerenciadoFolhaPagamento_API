@@ -20,7 +20,7 @@ namespace GerenciadorFolhaPagamento_Domain.Builders
         public DepartamentoBuilder VerificaSeDepartamentoJaExiste(string nomeDepartamento, IList<string> departamentosJaExistentes)
         {
 
-            if (departamentosJaExistentes.Contains(nomeDepartamento))
+            if (departamentosJaExistentes.Contains(nomeDepartamento.ToUpper()))
             {
                 _departamento = null;
                 return this;

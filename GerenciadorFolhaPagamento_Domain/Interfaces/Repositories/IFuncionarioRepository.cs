@@ -10,5 +10,7 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Repositories
     {
         Task SalvaNovoFuncionario(Funcionario novoFuncionario);
         Task<List<int>> RecuperaOsCodigosDeTodosOsFuncionarios();
+
+        Task<List<FuncionarioDto>> RecuperaTodosFuncionarios();
     }
 }

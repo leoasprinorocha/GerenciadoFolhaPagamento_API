@@ -23,6 +23,18 @@ namespace GerenciadorFolhaPagamento_Application.Applications
             _funcionarioBuilder = funcionarioBuilder;
         }
 
+        public async Task<List<FuncionarioDto>> RecuperaTodosFuncionarios()
+        {
+            try
+            {
+                return await _funcionarioRepository.RecuperaTodosFuncionarios();
+            }
+            finally
+            {
+                _unitOfWork.Dispose();
+            }
+        }
+
         public async Task SalvarFuncionario(NovoFuncionarioDto novoFuncionario)
         {
             _unitOfWork.BeginTransaction();

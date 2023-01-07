@@ -32,7 +32,7 @@ namespace GerenciadorFolhaPagamento_Application.Applications
         {
             try
             {
-                
+
                 return await _departamentoRepository.RecuperaTodosOsDepartamentos();
             }
             finally
@@ -46,6 +46,7 @@ namespace GerenciadorFolhaPagamento_Application.Applications
         {
             _unitOfWork.BeginTransaction();
             List<string> listaDepartamentosJaExistentes = await _departamentoRepository.RecuperaOsNomesDeTodosOsDepartamentos();
+            listaDepartamentosJaExistentes.ForEach(c => c = c.ToUpper());
             Departamento novoDepartamentoASerCadastrado = _departamentoBuilder.VerificaSeDepartamentoJaExiste(novoDepartamento.NomeDepartamento, listaDepartamentosJaExistentes)
                                                           .Build();
 
