@@ -21,7 +21,13 @@ namespace GerenciadoFolhaPagamento_API.Controllers
         public async Task<IActionResult> CadastrarParametro(List<NovoParametroDto> novoParametroDto)
         {
             await _parametroApplication.SalvaNovoParametro(novoParametroDto);
-            return Ok("Parâmetro cadastrado com sucesso!");
+            return Ok(new { Resposta = "Parâmetro cadastrado com sucesso!" });
         }
+
+        [HttpGet]
+        [Route("RetornaTodosOsParametros")]
+        public async Task<IActionResult> RetornaTodosOsParametros() =>
+        Ok(await _parametroApplication.RetornaTodosOsParametros());
+
     }
 }

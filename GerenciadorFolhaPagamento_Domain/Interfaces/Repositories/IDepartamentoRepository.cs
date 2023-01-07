@@ -13,6 +13,7 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Repositories
         Task SalvaNovoDepartamento(Departamento novoDepartamento);
         Task<List<string>> RecuperaOsNomesDeTodosOsDepartamentos();
 
-        Task<List<DepartamentoDto>> RecuperaTodosOsDepartamentos(); 
+        Task<List<DepartamentoDto>> RecuperaTodosOsDepartamentos();
+        Task<int> RetornaIdDepartamentoPeloNome(string nome);
     }
 }

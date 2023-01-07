@@ -8,9 +8,11 @@ namespace GerenciadorFolhaPagamento_Domain.Dtos
 {
     public class DepartamentoDto
     {
-        
+
         public int IdDepartamento { get; set; }
 
         public string NomeDepartamento { get; set; }
+        public string MesVigencia { get; set; }
+        public string AnoVigencia{ get; set; }
     }
 }

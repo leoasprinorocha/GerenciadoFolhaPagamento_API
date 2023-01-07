@@ -32,6 +32,17 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
             return HelpersRepository.DataReaderMapToList<DepartamentoDto>(listaDepartamentos);
         }
 
+        public async Task<int> RetornaIdDepartamentoPeloNome(string nome)
+        {
+            var transactional = _session.Transaction;
+            SqlCommand sqlCommand = new SqlCommand("SELECT IdDepartamento FROM Parametros WHERE NomeDepartamento = @nomeDepartamento", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+            sqlCommand.Parameters.AddWithValue("@nomeDepartamento", nome);
+            using (var idParametro = await sqlCommand.ExecuteReaderAsync())
+            {
+                return idParametro.GetInt32(0);
+            }
+        }
+
         public async Task SalvaNovoDepartamento(Departamento novoDepartamento)
         {
             string sqlCommand = @"INSERT INTO Departamento(NomeDepartamento) VALUES(pNomDepartamento)";

@@ -11,6 +11,7 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Applications
     public interface IParametroApplication
     {
         Task SalvaNovoParametro(List<NovoParametroDto> novoParametroDto);
-        string RetornaValorParametro(int codigoParametro);
+        Task<object> RetornaValorParametro(int codigoParametro);
+        Task<List<ParametrosDto>> RetornaTodosOsParametros();
     }
 }

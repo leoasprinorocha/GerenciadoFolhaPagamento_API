@@ -18,10 +18,28 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
             _session = session;
         }
 
+        public async Task AtualizaValorParametro(Parametros parametro)
+        {
+            var parameters = new { ValorParametro = parametro.ValorParametro, IdParametro = parametro.IdParametro };
+            string sqlCommand = @"UPDATE Parametros set ValorParametro = @ValorParametro WHERE IdParametro = @IdParametro";
+            await _session.Connection.ExecuteAsync(sqlCommand, parameters, _session.Transaction);
+        }
+
         public async Task<List<ParametrosDto>> RetornaTodosOsParametros()
         {
             var transactional = _session.Transaction;
             SqlCommand sqlCommand = new SqlCommand("SELECT * FROM Parametros", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+            using (var listaParametros = await sqlCommand.ExecuteReaderAsync())
+            {
+                return HelpersRepository.DataReaderMapToList<ParametrosDto>(listaParametros);
+            }
+        }
+
+        public async Task<object> RetornaValorParametro(int idParametro)
+        {
+            var transactional = _session.Transaction;
+            SqlCommand sqlCommand = new SqlCommand("SELECT ValorParametro FROM Parametros WHERE IdParametro = @idParametro", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+            sqlCommand.Parameters.AddWithValue("@idParametro", idParametro);
             using (var listaParametros = await sqlCommand.ExecuteReaderAsync())
             {
                 return HelpersRepository.DataReaderMapToList<ParametrosDto>(listaParametros);

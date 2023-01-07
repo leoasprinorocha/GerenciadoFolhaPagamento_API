@@ -6,6 +6,7 @@ using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Builders;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Repositories;
 using GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
@@ -28,8 +29,12 @@ namespace GerenciadorFolhaPagamento_Application.Applications
             _listaParametrosCarregados = new List<ParametrosDto>();
         }
 
-        public string RetornaValorParametro(int codigoParametro) =>
-            _listaParametrosCarregados.FirstOrDefault(c => c.IdParametro == codigoParametro).ValorParametro;
+        public async Task<List<ParametrosDto>> RetornaTodosOsParametros() =>
+        await _parametrosRepository.RetornaTodosOsParametros();
+
+
+        public async Task<object> RetornaValorParametro(int codigoParametro) =>
+            await _parametrosRepository.RetornaValorParametro(codigoParametro);
 
 
         public async Task SalvaNovoParametro(List<NovoParametroDto> novosParametrosDto)
@@ -42,26 +47,22 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                 Parametros novoParametroASerCadastrado = _parametrosBuilder.VerificaSeParametroJaExiste(listaParametrosJaExistentes, parametro)
                                                          .Build();
 
-                if (novoParametroASerCadastrado != null)
-                {
+                if (novoParametroASerCadastrado.IdParametro <= 0)
                     await _parametrosRepository.SalvarNovoParametro(novoParametroASerCadastrado);
-                    _unitOfWork.Commit();
-                }
+                else
+                    await _parametrosRepository.AtualizaValorParametro(novoParametroASerCadastrado);
+
+                _unitOfWork.Commit();
+
             }
         }
 
         private async Task CarregaParametros()
         {
-            try
+
+            if (_listaParametrosCarregados.Count == 0)
             {
-                if (_listaParametrosCarregados.Count == 0)
-                {
-                    _listaParametrosCarregados = await _parametrosRepository.RetornaTodosOsParametros();
-                }
-            }
-            finally
-            {
-                _unitOfWork.Dispose();
+                _listaParametrosCarregados = await _parametrosRepository.RetornaTodosOsParametros();
             }
         }
     }

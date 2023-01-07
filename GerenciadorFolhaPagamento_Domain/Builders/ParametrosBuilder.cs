@@ -18,7 +18,8 @@ namespace GerenciadorFolhaPagamento_Domain.Builders
         {
             if (listaParametros.Contains(novoParametro.NomeParametro.ToUpper()))
             {
-                _parametros = null;
+                _parametros.ValorParametro = novoParametro.ValorParametro;
+                _parametros.IdParametro = novoParametro.IdParametro;
                 return this;
             }
             else

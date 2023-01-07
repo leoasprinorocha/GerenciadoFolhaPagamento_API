@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GerenciadorFolhaPagamento_Domain.Interfaces.Applications
+namespace GerenciadorFolhaPagamento_Domain.Interfaces.Repositories
 {
-    public interface IProcessamentoFolhaApplication
+    public interface IProcessamentoFolhaRepository
     {
-        Task IniciaProcessamento();
         Task<int> SalvaProcessamentoFolha(ProcessamentoFolha processamentoFolha);
     }
 }
