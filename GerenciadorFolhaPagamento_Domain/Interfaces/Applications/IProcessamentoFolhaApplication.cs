@@ -9,7 +9,8 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Applications
 {
     public interface IProcessamentoFolhaApplication
     {
-        Task IniciaProcessamento();
+        Task<bool> IniciaProcessamento();
         Task<int> SalvaProcessamentoFolha(ProcessamentoFolha processamentoFolha);
+
     }
 }

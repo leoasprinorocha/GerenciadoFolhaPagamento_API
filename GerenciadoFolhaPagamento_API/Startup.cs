@@ -1,4 +1,5 @@
 using GerenciadorFolhaPagamento_API.Configuration;
+using GerenciadorFolhaPagamento_Application.Applications;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -38,7 +39,7 @@ namespace GerenciadoFolhaPagamento_API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IProcessamentoFolhaApplication processamentoFolhaApplication)
         {
             if (env.IsDevelopment())
             {
@@ -47,9 +48,8 @@ namespace GerenciadoFolhaPagamento_API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "GerenciadoFolhaPagamento_API v1"));
             }
 
-            var processamentoFolha = app.ApplicationServices.GetService<IProcessamentoFolhaApplication>();
 
-            //RecurringJob.AddOrUpdate(() => processamentoFolha.IniciaProcessamento(), "*/5 * * * * ");
+            //RecurringJob.AddOrUpdate("Processamento arquivos de folha pagamento", () => processamentoFolhaApplication.IniciaProcessamento(), "*/10 * * * * *");
 
             app.UseHttpsRedirection();
 

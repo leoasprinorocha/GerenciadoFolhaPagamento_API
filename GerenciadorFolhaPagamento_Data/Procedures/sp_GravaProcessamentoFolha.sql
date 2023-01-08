@@ -1,18 +1,19 @@
 ﻿CREATE PROCEDURE sp_GravaProcessamentoFolha
 @idDepartamento int,
 @mesVigencia varchar(15),
-@totalPagamentos decimal,
-@totalDescontos decimal,
-@totalExtras decimal,
-@new_identity int = null OUTPUT
+@totalPagamentos decimal(7,2),
+@totalDescontos decimal(7,2),
+@totalExtras decimal(7,2)
+
 
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	INSERT INTO		ProcessamentoFolha
-					(Departamento_idDepartamento, MesVigencia, TotalPagamentos, TotalDescontos, TotalExtras)
+	INSERT INTO	ProcessamentoFolha
+			(Departamento_idDepartamento, MesVigencia, TotalPagamentos, TotalDescontos, TotalExtras)
          SELECT		@idDepartamento, @mesVigencia, @totalPagamentos, @totalDescontos, @totalExtras;
-		 SET @new_identity = SCOPE_IDENTITY();
+	
+	RETURN SCOPE_IDENTITY();
 END
 GO

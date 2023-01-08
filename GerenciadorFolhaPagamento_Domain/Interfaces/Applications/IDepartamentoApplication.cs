@@ -9,7 +9,8 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Applications
 {
     public interface IDepartamentoApplication
     {
-        Task SalvarDepartamento(NovoDepartamentoDto novoDepartamento);
+        Task<int> SalvarDepartamento(NovoDepartamentoDto novoDepartamento);
         Task<List<DepartamentoDto>> RecuperaTodosDepartamentos();
+        Task<int> RetornaIdDepartamentoPeloNome(string nome);
     }
 }

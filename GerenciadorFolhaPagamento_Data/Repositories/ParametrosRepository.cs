@@ -38,11 +38,17 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
         public async Task<object> RetornaValorParametro(int idParametro)
         {
             var transactional = _session.Transaction;
+            string valorDoParametro = "";
             SqlCommand sqlCommand = new SqlCommand("SELECT ValorParametro FROM Parametros WHERE IdParametro = @idParametro", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
             sqlCommand.Parameters.AddWithValue("@idParametro", idParametro);
-            using (var listaParametros = await sqlCommand.ExecuteReaderAsync())
+            using (var valorParametro = await sqlCommand.ExecuteReaderAsync())
             {
-                return HelpersRepository.DataReaderMapToList<ParametrosDto>(listaParametros);
+                while (valorParametro.Read())
+                {
+                    valorDoParametro = valorParametro.GetString(0);
+                }
+
+                return valorDoParametro;
             }
         }
 

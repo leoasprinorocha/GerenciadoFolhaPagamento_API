@@ -1,6 +1,8 @@
 ﻿
 
+using GerenciadorFolhaPagamento_Domain.Dtos;
 using System;
+using System.Collections.Generic;
 
 namespace GerenciadorFolhaPagamento_Domain.Entities
 {
@@ -16,9 +18,9 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
 
         public decimal? TotalAReceber { get; set; }
 
-        public TimeSpan? HorasExtras { get; set; }
+        public decimal HorasExtras { get; set; }
 
-        public TimeSpan? HorasDebito { get; set; }
+        public decimal HorasDebito { get; set; }
 
         public int? DiasFalta { get; set; }
 
@@ -26,23 +28,28 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
 
         public int? DiasTrabalhados { get; set; }
 
-        public int RetornasHorasNegativasMes(int diasUteisNoMes, int horasEsperadasDeTrabalhoDia, int horasTrabalhadasMes)
+        public decimal RetornasHorasNegativasMes(int diasUteisNoMes, int horasEsperadasDeTrabalhoDia, int horasTrabalhadasMes)
         {
+            TimeSpan totalHorasNegativasMes = TimeSpan.Zero;
 
             int totalHorasEsperadasMes = diasUteisNoMes * horasEsperadasDeTrabalhoDia;
             if (horasTrabalhadasMes < totalHorasEsperadasMes)
-                return totalHorasEsperadasMes - horasTrabalhadasMes;
-            else
-                return 0;
+                totalHorasNegativasMes += TimeSpan.FromHours(totalHorasEsperadasMes - horasTrabalhadasMes);
+
+            return (decimal)totalHorasNegativasMes.TotalHours;
+
 
         }
 
-        public int RetornaHorasExtrasMes(int diasUteisNoMes, int horasEsperadasDeTrabalhoDia, int horasTrabalhadasMes)
+        public decimal RetornaHorasExtrasMes(int diasUteisNoMes, int horasEsperadasDeTrabalhoDia, int horasTrabalhadasMes)
         {
+            TimeSpan totalHorasExtrasMes = TimeSpan.Zero;
+
             int totalHorasEsperadasMes = diasUteisNoMes * horasEsperadasDeTrabalhoDia;
             if (horasTrabalhadasMes > totalHorasEsperadasMes)
-                return horasTrabalhadasMes - totalHorasEsperadasMes;
-            return 0;
+                totalHorasExtrasMes += TimeSpan.FromHours(horasTrabalhadasMes - totalHorasEsperadasMes);
+
+            return (decimal)totalHorasExtrasMes.TotalHours;
         }
 
         public int RetornaQuantidadeDeDiasFaltantesMes(int quantidadeDiasUteisMes, int quantidadeDiasTrabalhadosMes)
@@ -62,6 +69,16 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
 
         public decimal RetornaTotalAReceber(decimal valorHora, int quantidadeHorasTrabalhadas) =>
             (decimal)(valorHora * quantidadeHorasTrabalhadas);
+
+        public int RetornaQuantidadeTotalHorasTrabalhadasFuncionario(List<RegistroPontoDto> registrosDoFuncionario)
+        {
+            int totalHoras = 0;
+            foreach (var registroFuncionario in registrosDoFuncionario)
+            {
+                totalHoras += Convert.ToInt32((registroFuncionario.HoraSaida.TotalHours - registroFuncionario.HoraEntrada.TotalHours) - (registroFuncionario.HoraSaidaAlmoco.TotalHours - registroFuncionario.HoraEntradaAlmoco.TotalHours));
+            }
+            return totalHoras;
+        }
 
     }
 }

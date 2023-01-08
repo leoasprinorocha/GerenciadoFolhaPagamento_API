@@ -34,9 +34,11 @@ namespace GerenciadorFolhaPagamento_API.Configuration
         private static IServiceCollection AddRepositoriesServices(this IServiceCollection services)
         {
 
-            services.AddTransient<IFuncionarioRepository, FuncionarioRepository>();
-            services.AddTransient<IDepartamentoRepository, DepartamentoRepository>();
-            services.AddTransient<IParametrosRepository, ParametrosRepository>();
+            services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
+            services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+            services.AddScoped<IParametrosRepository, ParametrosRepository>();
+            services.AddScoped<IProcessamentoFolhaRepository, ProcessamentoFolhaRepository>();
+            services.AddScoped<IProcessamentoFolhaFuncionarioRepository, ProcessamentoFolhaFuncionarioRepository>();
 
             return services;
         }
@@ -46,6 +48,8 @@ namespace GerenciadorFolhaPagamento_API.Configuration
             services.AddScoped<IFuncionarioApplication, FuncionarioApplication>();
             services.AddScoped<IDepartamentoApplication, DepartamentoApplication>();
             services.AddScoped<IParametroApplication, ParametroApplication>();
+            services.AddScoped<IProcessamentoFolhaApplication, ProcessamentoFolhaApplication>();
+            services.AddScoped<IProcessamentoFolhaFuncionarioApplication, ProcessamentoFolhaFuncionarioApplication>();
             return services;
         }
 

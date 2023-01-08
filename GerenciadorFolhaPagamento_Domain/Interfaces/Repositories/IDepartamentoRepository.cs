@@ -10,7 +10,7 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Repositories
 {
     public interface IDepartamentoRepository
     {
-        Task SalvaNovoDepartamento(Departamento novoDepartamento);
+        Task<int> SalvaNovoDepartamento(Departamento novoDepartamento);
         Task<List<string>> RecuperaOsNomesDeTodosOsDepartamentos();
 
         Task<List<DepartamentoDto>> RecuperaTodosOsDepartamentos();

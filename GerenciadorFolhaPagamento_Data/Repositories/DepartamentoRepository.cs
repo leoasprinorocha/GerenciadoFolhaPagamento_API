@@ -20,16 +20,35 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
 
         public async Task<List<string>> RecuperaOsNomesDeTodosOsDepartamentos()
         {
-            string sqlCommand = "SELECT NomeDepartamento FROM Departamento";
-            return (List<string>)await _session.Connection.QueryAsync<List<string>>(sqlCommand, _session.Transaction);
+            var transactional = _session.Transaction;
+            List<string> listaDepartamentos = new List<string>();
+            SqlCommand sqlCommand = new SqlCommand("SELECT NomeDepartamento FROM Departamento", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+            using (var nomesDepartamentos = await sqlCommand.ExecuteReaderAsync())
+            {
+                while(nomesDepartamentos.Read()){
+                    listaDepartamentos.Add(nomesDepartamentos.GetString(0).ToUpper());
+                }
+            }
+
+            return listaDepartamentos;
+
         }
 
         public async Task<List<DepartamentoDto>> RecuperaTodosOsDepartamentos()
         {
-            var transactional = _session.Connection.BeginTransaction();
+            var transactional = _session.Transaction;
+            List<DepartamentoDto> listaDepartamentos = new List<DepartamentoDto>();
             SqlCommand sqlCommand = new SqlCommand("SELECT * FROM Departamento", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
-            var listaDepartamentos = await sqlCommand.ExecuteReaderAsync();
-            return HelpersRepository.DataReaderMapToList<DepartamentoDto>(listaDepartamentos);
+            
+            using (var departamento = await sqlCommand.ExecuteReaderAsync()){
+                while (departamento.Read())
+                {
+                    listaDepartamentos.Add(departamento.ConvertToObject<DepartamentoDto>());
+                }
+            }
+
+            return listaDepartamentos;
+                
         }
 
         public async Task<int> RetornaIdDepartamentoPeloNome(string nome)
@@ -43,11 +62,14 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
             }
         }
 
-        public async Task SalvaNovoDepartamento(Departamento novoDepartamento)
+        public async Task<int> SalvaNovoDepartamento(Departamento novoDepartamento)
         {
-            string sqlCommand = @"INSERT INTO Departamento(NomeDepartamento) VALUES(pNomDepartamento)";
-
-            await _session.Connection.ExecuteAsync(sqlCommand, new { pNomeDepartamento = novoDepartamento.NomeDepartamento }, _session.Transaction);
+            var parameters = new { nomeDepartamento = novoDepartamento.NomeDepartamento };
+            string sqlCommand = @"DECLARE @result INT;
+                                EXEC @result = sp_GravaDepartamento @nomeDepartamento;
+                                SELECT @result;";
+            var result = await _session.Connection.ExecuteScalarAsync<int>(sqlCommand, parameters, _session.Transaction);
+            return (int)result;
         }
     }
 }

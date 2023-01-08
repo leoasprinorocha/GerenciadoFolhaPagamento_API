@@ -20,29 +20,31 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
 
         public async Task<List<int>> RecuperaOsCodigosDeTodosOsFuncionarios()
         {
-            string sqlCommand = "SELECT IdFuncionario FROM Funcionario";
-            return (List<int>)await _session.Connection.QueryAsync<List<int>>(sqlCommand, _session.Transaction);
+            var transactional = _session.Transaction;
+            SqlCommand sqlCommand = new SqlCommand("SELECT IdFuncionario FROM Funcionario", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+            using (var listaParametros = await sqlCommand.ExecuteReaderAsync())
+            {
+                return HelpersRepository.DataReaderMapToList<int>(listaParametros);
+            }
         }
 
         public async Task<List<FuncionarioDto>> RecuperaTodosFuncionarios()
         {
             var transactional = _session.Connection.BeginTransaction();
             SqlCommand sqlCommand = new SqlCommand("SELECT * FROM Funcionario", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
-            var listaFuncionarios = await sqlCommand.ExecuteReaderAsync();
-            return HelpersRepository.DataReaderMapToList<FuncionarioDto>(listaFuncionarios);
+            using (var listaFuncionarios = await sqlCommand.ExecuteReaderAsync())
+            {
+                return HelpersRepository.DataReaderMapToList<FuncionarioDto>(listaFuncionarios);
+            }
         }
 
         public async Task SalvaNovoFuncionario(Funcionario novoFuncionario)
         {
+            var parameters = new { IdDepartamento = novoFuncionario.Departamento_idDepartamento, NomeFuncionario = novoFuncionario.NomeFuncionario, ValorHora = novoFuncionario.ValorHora };
             string sqlCommand = @"INSERT INTO Funcionario(Departamento_idDepartamento, NomeFuncionario, ValorHora) 
-                                 VALUES(pIdDepartamento, pNomeFuncionario, pValorHora)";
+                                 VALUES(@IdDepartamento, @NomeFuncionario, @ValorHora)";
 
-            await _session.Connection.ExecuteAsync(sqlCommand, new
-            {
-                pIdDepartamento = novoFuncionario.Departamento_idDepartamento,
-                pNomeFuncionario = novoFuncionario.NomeFuncionario,
-                pValorHora = novoFuncionario.ValorHora
-            }, _session.Transaction);
+            await _session.Connection.ExecuteAsync(sqlCommand, parameters, _session.Transaction);
         }
 
     }

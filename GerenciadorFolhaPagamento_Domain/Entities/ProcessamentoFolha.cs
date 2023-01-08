@@ -58,7 +58,8 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
                 var horasTrabalhadasDia = (registro.HoraSaida - registro.HoraEntrada) - (registro.HoraSaidaAlmoco - registro.HoraEntradaAlmoco);
                 var valorPagoDia = Convert.ToDecimal((horasTrabalhadasDia.TotalHours)) * (registro.ValorHora);
 
-                if (horasTrabalhadasDia.TotalHours < QuantidadeDeHorasDeAlmocoEsperadaDia){
+                if (horasTrabalhadasDia.TotalHours < QuantidadeDeHorasTrabalhadasEsperadaDia)
+                {
                     totalDescontos += Convert.ToDecimal((QuantidadeDeHorasTrabalhadasEsperadaDia - horasTrabalhadasDia.TotalHours)) * (registro.ValorHora);
                     totalHorasNegativas += QuantidadeDeHorasTrabalhadasEsperadaDia - Convert.ToInt32(horasTrabalhadasDia.TotalHours);
                 }

@@ -41,20 +41,29 @@ namespace GerenciadorFolhaPagamento_Application.Applications
             }
         }
 
+        public async Task<int> RetornaIdDepartamentoPeloNome(string nome) =>
+        await _departamentoRepository.RetornaIdDepartamentoPeloNome(nome);
 
-        public async Task SalvarDepartamento(NovoDepartamentoDto novoDepartamento)
+
+        public async Task<int> SalvarDepartamento(NovoDepartamentoDto novoDepartamento)
         {
-            _unitOfWork.BeginTransaction();
+
+
             List<string> listaDepartamentosJaExistentes = await _departamentoRepository.RecuperaOsNomesDeTodosOsDepartamentos();
-            listaDepartamentosJaExistentes.ForEach(c => c = c.ToUpper());
+
             Departamento novoDepartamentoASerCadastrado = _departamentoBuilder.VerificaSeDepartamentoJaExiste(novoDepartamento.NomeDepartamento, listaDepartamentosJaExistentes)
                                                           .Build();
 
             if (novoDepartamentoASerCadastrado != null)
             {
-                await _departamentoRepository.SalvaNovoDepartamento(novoDepartamentoASerCadastrado);
-                _unitOfWork.Commit();
+                return await _departamentoRepository.SalvaNovoDepartamento(novoDepartamentoASerCadastrado);
             }
+            else
+            {
+                var departamentos = await RecuperaTodosDepartamentos();
+                return departamentos.First(c => c.NomeDepartamento.Equals(novoDepartamento.NomeDepartamento)).IdDepartamento;
+            }
+
         }
     }
 }

@@ -28,9 +28,9 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                 totalExtras = processamentoFolha.TotalExtras
             };
 
-            string sqlCommand = @"DECLARE @new_identity INT;
-                                 EXEC sp_GravaProcessamentoFolha @idDepartamento, @mesVigencia, @totalPagamentos, @totalDescontos, @totalExtras, @new_identity;
-                                 PRINT @new_identity;";
+            string sqlCommand = @"DECLARE @result INT;
+                                 EXEC @result = sp_GravaProcessamentoFolha @idDepartamento, @mesVigencia, @totalPagamentos, @totalDescontos, @totalExtras;
+                                 SELECT @result;";
 
             var result = await _session.Connection.ExecuteScalarAsync(sqlCommand, parameters, _session.Transaction);
             return (int)result;
