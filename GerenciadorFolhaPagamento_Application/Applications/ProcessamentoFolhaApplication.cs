@@ -105,7 +105,7 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
                         int quantidadeDiasTrabalhadosMes = listaDeRegistros.Where(c => c.CodigoFuncionario == registroPontoFuncionario.CodigoFuncionario).Count();
 
-                        processamentoFolha_Funcionario.DiasFalta = processamentoFolha_Funcionario.RetornaQuantidadeDeDiasFaltantesMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes);
+                        processamentoFolha_Funcionario.DiasFalta = -(processamentoFolha_Funcionario.RetornaQuantidadeDeDiasFaltantesMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes));
                         processamentoFolha_Funcionario.DiasExtras = processamentoFolha_Funcionario.RetornaQuantidadeDiasExtrasMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes);
                         processamentoFolha_Funcionario.DiasTrabalhados = quantidadeDiasTrabalhadosMes;
                         _processamentoFolhaFuncionarioApplication.SalvaProcessamentoFolhaFuncionario(processamentoFolha_Funcionario).Wait();
