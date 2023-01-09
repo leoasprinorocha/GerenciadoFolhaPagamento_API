@@ -23,7 +23,7 @@ namespace GerenciadorFolhaPagamento_API.Configuration
         private static IServiceCollection AddHelpersService(this IServiceCollection services)
         {
             services.AddScoped<DbSession>();
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IFuncionarioBuilder, FuncionarioBuilder>();
             services.AddScoped<IDepartamentoBuilder, DepartamentoBuilder>();
             services.AddScoped<IParametrosBuilder, ParametrosBuilder>();

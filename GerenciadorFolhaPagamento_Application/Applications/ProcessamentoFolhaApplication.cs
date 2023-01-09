@@ -161,11 +161,11 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                     CodigoFuncionario = int.Parse(planilha.Cell($"A{l}").Value.ToString()),
                     Nome = planilha.Cell($"B{l}").Value.ToString(),
                     ValorHora = decimal.Parse(planilha.Cell($"C{l}").Value.ToString().Replace("R$", "").Replace(" ", "")),
-                    DataRegistro = DateTime.Parse(planilha.Cell($"D{l}").Value.ToString()),
-                    HoraEntrada = TimeSpan.Parse(horaEntradaAux.ToString("HH:mm")),
-                    HoraSaida = TimeSpan.Parse(horaSaidaAux.ToString("HH:mm")),
-                    HoraEntradaAlmoco = TimeSpan.Parse(horaEntradaAlmocoAux),
-                    HoraSaidaAlmoco = TimeSpan.Parse(horaSaidaAlmocoAux)
+                    DataRegistro = DateTime.Parse(planilha.Cell($"D{l}").Value.ToString().Trim()),
+                    HoraEntrada = TimeSpan.Parse(horaEntradaAux.ToString("HH:mm").Trim()),
+                    HoraSaida = TimeSpan.Parse(horaSaidaAux.ToString("HH:mm").Trim()),
+                    HoraEntradaAlmoco = TimeSpan.Parse(horaEntradaAlmocoAux.Trim()),
+                    HoraSaidaAlmoco = TimeSpan.Parse(horaSaidaAlmocoAux.Trim())
                 };
 
                 listaRegistros.Add(registro);
@@ -180,6 +180,21 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
         public async Task<List<PesquisaDepartamentosProcessadosDto>> RetornaTodosOsProcessamentos() =>
         await _processamentoFolhaRepository.PesquisaDepartamentosProcessados();
+
+        public void LimparDadosProcessados()
+        {
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _processamentoFolhaRepository.LimparDadosProcessados();
+            }
+            finally
+            {
+
+                _unitOfWork.Commit();
+            }
+        }
+
 
     }
 }

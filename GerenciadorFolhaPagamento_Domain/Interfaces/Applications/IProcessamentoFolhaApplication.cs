@@ -12,9 +12,9 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Applications
     {
         void IniciaProcessamento();
         Task<int> SalvaProcessamentoFolha(ProcessamentoFolha processamentoFolha);
-
         Task<List<string>> RetornaArquivosQueEstaoNaPastaDeProcessamento();
         Task<List<PesquisaDepartamentosProcessadosDto>> RetornaTodosOsProcessamentos();
+        void LimparDadosProcessados();
 
     }
 }

@@ -12,5 +12,6 @@ namespace GerenciadorFolhaPagamento_Domain.Interfaces.Repositories
     {
         Task<int> SalvaProcessamentoFolha(ProcessamentoFolha processamentoFolha);
         Task<List<PesquisaDepartamentosProcessadosDto>> PesquisaDepartamentosProcessados();
+        void LimparDadosProcessados();
     }
 }

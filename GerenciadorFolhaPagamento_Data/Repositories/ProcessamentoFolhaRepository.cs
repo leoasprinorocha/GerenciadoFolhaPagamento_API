@@ -22,6 +22,18 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
             _session = session;
         }
 
+        public void LimparDadosProcessados()
+        {
+            var transactional = _session.Transaction;
+            SqlCommand sqlCommand = new SqlCommand(
+                                 @"delete from Funcionario;
+                                  delete from Departamento;
+                                  delete from ProcessamentoFolha;
+                                  delete from ProcessamentoFolha_Funcionario;", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+
+            sqlCommand.ExecuteNonQuery();
+        }
+
         public async Task<List<PesquisaDepartamentosProcessadosDto>> PesquisaDepartamentosProcessados()
         {
             var transactional = _session.Transaction;

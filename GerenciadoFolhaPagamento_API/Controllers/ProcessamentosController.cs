@@ -1,4 +1,5 @@
 ﻿using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
+using GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
@@ -12,12 +13,15 @@ namespace GerenciadoFolhaPagamento_API.Controllers
         private readonly IFuncionarioApplication _funcionarioApplication;
         private readonly IDepartamentoApplication _departamentoApplication;
         private readonly IProcessamentoFolhaApplication _processamentoFolhaApplication;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ProcessamentosController(IFuncionarioApplication funcionarioApplication, IDepartamentoApplication departamentoApplication, IProcessamentoFolhaApplication processamentoFolhaApplication)
+        public ProcessamentosController(IFuncionarioApplication funcionarioApplication, IDepartamentoApplication departamentoApplication, 
+                                        IProcessamentoFolhaApplication processamentoFolhaApplication, IUnitOfWork unitOfWork)
         {
             _funcionarioApplication = funcionarioApplication;
             _departamentoApplication = departamentoApplication;
             _processamentoFolhaApplication = processamentoFolhaApplication;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -47,6 +51,14 @@ namespace GerenciadoFolhaPagamento_API.Controllers
         {
             var listaDepartamentosProcessados = await _processamentoFolhaApplication.RetornaTodosOsProcessamentos();
             return Ok(JsonConvert.SerializeObject(listaDepartamentosProcessados).ToString());
+        }
+
+        [HttpPost]
+        [Route("LimparDadosProcessados")]
+        public IActionResult LimparDadosProcessados()
+        {
+            _processamentoFolhaApplication.LimparDadosProcessados();
+            return Ok(new { Resposta = "Limpeza feita com sucesso!" });
         }
 
 
