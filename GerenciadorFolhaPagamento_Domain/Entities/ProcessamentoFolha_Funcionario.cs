@@ -37,8 +37,6 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
                 totalHorasNegativasMes += TimeSpan.FromHours(totalHorasEsperadasMes - horasTrabalhadasMes);
 
             return (decimal)totalHorasNegativasMes.TotalHours;
-
-
         }
 
         public decimal RetornaHorasExtrasMes(int diasUteisNoMes, int horasEsperadasDeTrabalhoDia, int horasTrabalhadasMes)

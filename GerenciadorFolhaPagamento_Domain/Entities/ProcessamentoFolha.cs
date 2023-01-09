@@ -14,7 +14,7 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
         public int Departamento_idDepartamento { get; set; }
 
         public string MesVigencia { get; set; }
-        public string AnoVigencia{ get; set; }
+        public string AnoVigencia { get; set; }
 
         public decimal? TotalPagamentos { get; set; }
 
@@ -64,7 +64,8 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
                     totalDescontos += Convert.ToDecimal((QuantidadeDeHorasTrabalhadasEsperadaDia - horasTrabalhadasDia.TotalHours)) * (registro.ValorHora);
                     totalHorasNegativas += QuantidadeDeHorasTrabalhadasEsperadaDia - Convert.ToInt32(horasTrabalhadasDia.TotalHours);
                 }
-                else if (horasTrabalhadasDia.TotalHours > QuantidadeDeHorasDeAlmocoEsperadaDia){
+                else if (horasTrabalhadasDia.TotalHours > QuantidadeDeHorasDeAlmocoEsperadaDia)
+                {
                     totalExtras += Convert.ToDecimal((horasTrabalhadasDia.TotalHours - QuantidadeDeHorasTrabalhadasEsperadaDia)) * (registro.ValorHora);
                     totalHorasExtras += Convert.ToInt32(horasTrabalhadasDia.TotalHours) - QuantidadeDeHorasTrabalhadasEsperadaDia;
                 }
@@ -74,7 +75,8 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
 
             }
 
-            ProcessamentoFolhaDto processamentoFolhaDto = new ProcessamentoFolhaDto() { 
+            ProcessamentoFolhaDto processamentoFolhaDto = new ProcessamentoFolhaDto()
+            {
                 TotalPagamentos = totalPagamentos,
                 TotalHorasTrabalhadas = (int)totalHoras.TotalHours,
                 TotalDescontos = totalDescontos,
@@ -86,7 +88,7 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
             return processamentoFolhaDto;
         }
 
-        public int QuantidadeDeHorasTrabalhadasEsperadaDia { get { return 8; } private set { } }
-        public int QuantidadeDeHorasDeAlmocoEsperadaDia { get { return 1; } private set { } }
+        public int QuantidadeDeHorasTrabalhadasEsperadaDia { get { return 8; } }
+        public int QuantidadeDeHorasDeAlmocoEsperadaDia { get { return 1; } }
     }
 }
