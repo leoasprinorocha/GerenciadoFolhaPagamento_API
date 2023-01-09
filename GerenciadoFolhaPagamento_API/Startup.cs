@@ -1,3 +1,4 @@
+using GerenciadoFolhaPagamento_API.SignalRHub;
 using GerenciadorFolhaPagamento_API.Configuration;
 using GerenciadorFolhaPagamento_Application.Applications;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
@@ -32,10 +33,13 @@ namespace GerenciadoFolhaPagamento_API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GerenciadoFolhaPagamento_API", Version = "v1" });
             });
 
-            services.AddHangfire(op => {
+            services.AddHangfire(op =>
+            {
                 op.UseMemoryStorage();
             });
             services.AddHangfireServer();
+            services.AddSignalR();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,9 +63,11 @@ namespace GerenciadoFolhaPagamento_API
 
             app.UseAuthorization();
 
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<MainHub>("/processados");
             });
         }
     }
