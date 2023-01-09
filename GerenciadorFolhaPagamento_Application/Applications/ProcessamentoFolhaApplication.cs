@@ -21,6 +21,8 @@ namespace GerenciadorFolhaPagamento_Application.Applications
         private readonly IProcessamentoFolhaRepository _processamentoFolhaRepository;
         private readonly IFuncionarioApplication _funcionarioApplication;
         private readonly IUnitOfWork _unitOfWork;
+        public int tentativasExecucao = 0;
+        private FileInfo[] _arquivosProcessados;
 
         public ProcessamentoFolhaApplication(IParametroApplication parametroApplication, IDepartamentoApplication departamentoApplication,
                                              IProcessamentoFolhaRepository processamentoFolhaRepository, IUnitOfWork unitOfWork,
@@ -35,17 +37,16 @@ namespace GerenciadorFolhaPagamento_Application.Applications
             _funcionarioApplication = funcionarioApplication;
         }
 
-        public async Task<bool> IniciaProcessamento()
+        public void IniciaProcessamento()
         {
 
             try
             {
                 _unitOfWork.BeginTransaction();
-                var diretorioParametro = await _parametroApplication.RetornaValorParametro(1);
+                var diretorioParametro = _parametroApplication.RetornaValorParametro(1).Result;
                 DirectoryInfo diretorio = new DirectoryInfo(diretorioParametro.ToString());
                 FileInfo[] arquivosASeremProcessados = diretorio.GetFiles();
-
-               
+                _arquivosProcessados = arquivosASeremProcessados;
 
                 foreach (var arquivo in arquivosASeremProcessados)
                 {
@@ -58,7 +59,8 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                     departamentoProcessado.AnoVigencia = departamentoProcessado.AnoVigencia.Replace(".xlsx", "");
 
                     var novoDepartamento = new NovoDepartamentoDto() { NomeDepartamento = departamentoProcessado.NomeDepartamento };
-                    var idDepartamentoSalvo = await _departamentoApplication.SalvarDepartamento(novoDepartamento);
+                    var idDepartamentoSalvo = _departamentoApplication.SalvarDepartamento(novoDepartamento).Result;
+
 
                     ProcessamentoFolha processamentoFolha = new ProcessamentoFolha();
                     var listaDeRegistros = RetornaListaDeRegistroDoArquivo(arquivo.FullName);
@@ -70,49 +72,67 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                     processamentoFolha.TotalPagamentos = objetoComPropriedasTotais.TotalPagamentos;
                     processamentoFolha.TotalDescontos = objetoComPropriedasTotais.TotalDescontos;
                     processamentoFolha.TotalExtras = objetoComPropriedasTotais.TotalHorasExtras;
-                    
+                    processamentoFolha.AnoVigencia = departamentoProcessado.AnoVigencia;
+                    var idProcessamentoFolha = SalvaProcessamentoFolha(processamentoFolha).Result;
 
-                    _unitOfWork.BeginTransaction();
-                    var idProcessamentoFolha = await SalvaProcessamentoFolha(processamentoFolha);
-                    _unitOfWork.Commit();
 
                     foreach (var registroPontoFuncionario in listaDeRegistros)
                     {
-                        
                         ProcessamentoFolha_Funcionario processamentoFolha_Funcionario = new ProcessamentoFolha_Funcionario();
                         processamentoFolha_Funcionario.Funcionario_Departamento_idDepartamento = idDepartamentoSalvo;
                         processamentoFolha_Funcionario.Funcionario_idFuncionario = registroPontoFuncionario.CodigoFuncionario;
                         processamentoFolha_Funcionario.IdProcessamentoFolhaFuncionario = idProcessamentoFolha;
 
+                        NovoFuncionarioDto novoFuncionarioDto = new NovoFuncionarioDto()
+                        {
+                            NomeFuncionario = registroPontoFuncionario.Nome,
+                            ValorHora = registroPontoFuncionario.ValorHora,
+                            IdDepartamento = idDepartamentoSalvo,
+                            CodigoRegistroFuncionario = registroPontoFuncionario.CodigoFuncionario
+                        };
+
+                        _funcionarioApplication.SalvarFuncionario(novoFuncionarioDto).Wait();
+
+
                         int horasTrabalhadasMes = processamentoFolha_Funcionario.
                                                   RetornaQuantidadeTotalHorasTrabalhadasFuncionario(listaDeRegistros.Where(c => c.CodigoFuncionario == registroPontoFuncionario.CodigoFuncionario).ToList());
 
-                        processamentoFolha_Funcionario.TotalAReceber = processamentoFolha_Funcionario.RetornaTotalAReceber(registroPontoFuncionario.ValorHora, horasTrabalhadasMes);
+                        int horasTrabalhadasDia = processamentoFolha_Funcionario.RetornaQuantidadeHorasTrabalhadasDia(registroPontoFuncionario);
 
-
-                        processamentoFolha_Funcionario.HorasExtras = processamentoFolha_Funcionario.RetornaHorasExtrasMes(quantidadeDiasUteisMes, processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia, horasTrabalhadasMes);
-                        processamentoFolha_Funcionario.HorasDebito = processamentoFolha_Funcionario.RetornasHorasNegativasMes(quantidadeDiasUteisMes, processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia, horasTrabalhadasMes);
+                        processamentoFolha_Funcionario.TotalAReceber = processamentoFolha_Funcionario.RetornaTotalAReceber(registroPontoFuncionario.ValorHora, horasTrabalhadasDia);
+                        processamentoFolha_Funcionario.HorasExtras = horasTrabalhadasDia > processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia ? (horasTrabalhadasDia - processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia) : 0;
+                        processamentoFolha_Funcionario.HorasDebito = processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia > horasTrabalhadasDia ? (processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia - horasTrabalhadasDia) : 0;
 
                         int quantidadeDiasTrabalhadosMes = listaDeRegistros.Where(c => c.CodigoFuncionario == registroPontoFuncionario.CodigoFuncionario).Count();
 
                         processamentoFolha_Funcionario.DiasFalta = processamentoFolha_Funcionario.RetornaQuantidadeDeDiasFaltantesMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes);
                         processamentoFolha_Funcionario.DiasExtras = processamentoFolha_Funcionario.RetornaQuantidadeDiasExtrasMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes);
                         processamentoFolha_Funcionario.DiasTrabalhados = quantidadeDiasTrabalhadosMes;
-
-                        _unitOfWork.BeginTransaction();
-                        await _processamentoFolhaFuncionarioApplication.SalvaProcessamentoFolhaFuncionario(processamentoFolha_Funcionario);
-                        _unitOfWork.Commit();
+                        _processamentoFolhaFuncionarioApplication.SalvaProcessamentoFolhaFuncionario(processamentoFolha_Funcionario).Wait();
                     }
-
                 }
-
-                return true;
             }
             catch (Exception ex)
             {
-                return false;
+                tentativasExecucao += 1;
+                if (tentativasExecucao == 1)
+                    IniciaProcessamento();
+
+            }
+            finally
+            {
+                _unitOfWork.Commit();
+                ArquivosJaProcessados(_arquivosProcessados);
             }
 
+        }
+
+        public async Task<List<string>> RetornaArquivosQueEstaoNaPastaDeProcessamento()
+        {
+            var diretorioParametro = await _parametroApplication.RetornaValorParametro(1);
+            DirectoryInfo diretorio = new DirectoryInfo(diretorioParametro.ToString());
+            FileInfo[] arquivosASeremProcessados = diretorio.GetFiles();
+            return arquivosASeremProcessados.Select(c => c.Name).ToList();
         }
 
         public async Task<int> SalvaProcessamentoFolha(ProcessamentoFolha processamentoFolha) =>
@@ -121,20 +141,20 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
         private List<RegistroPontoDto> RetornaListaDeRegistroDoArquivo(string caminhoArquivo)
         {
-            
+
             var xls = new XLWorkbook(caminhoArquivo);
             List<RegistroPontoDto> listaRegistros = new List<RegistroPontoDto>();
             var planilha = xls.Worksheets.First();
             var totalLinhas = planilha.Rows().Count();
             for (int l = 2; l <= totalLinhas; l++)
             {
-                
-              
+
+
                 var horaEntradaAux = Convert.ToDateTime(planilha.Cell($"E{l}").Value.ToString());
                 var horaSaidaAux = Convert.ToDateTime(planilha.Cell($"F{l}").Value.ToString());
                 var horaEntradaAlmocoAux = planilha.Cell($"G{l}").Value.ToString().Substring(0, 5);
                 var horaSaidaAlmocoAux = planilha.Cell($"G{l}").Value.ToString().Substring(8, 5);
-                
+
 
                 RegistroPontoDto registro = new RegistroPontoDto()
                 {
@@ -154,5 +174,12 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
             return listaRegistros;
         }
+
+        private void ArquivosJaProcessados(FileInfo[] arquivosProcessados) =>
+            Array.ForEach(arquivosProcessados, (c) => c.Delete());
+
+        public async Task<List<PesquisaDepartamentosProcessadosDto>> RetornaTodosOsProcessamentos() =>
+        await _processamentoFolhaRepository.PesquisaDepartamentosProcessados();
+
     }
 }

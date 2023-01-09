@@ -25,18 +25,22 @@ namespace GerenciadorFolhaPagamento_Domain.Builders
             }
             else
             {
-                PreencheDadosFuncionario(nome, valorHora, idDepartamento);
+                PreencheDadosFuncionario(nome, valorHora, idDepartamento, codigoFuncionario);
                 return this;
             }
 
 
         }
 
-        private void PreencheDadosFuncionario(string nome, decimal valorHora, int idDepartamento)
+        private void PreencheDadosFuncionario(string nome, decimal valorHora, int idDepartamento,int codigoFuncionario)
         {
+            if(_funcionario == null)
+            _funcionario = new Funcionario();
+
             _funcionario.NomeFuncionario = nome;
             _funcionario.Departamento_idDepartamento = idDepartamento;
             _funcionario.ValorHora = valorHora;
+            _funcionario.CodigoRegistroFuncionario = codigoFuncionario;
         }
 
         public Funcionario Build() =>

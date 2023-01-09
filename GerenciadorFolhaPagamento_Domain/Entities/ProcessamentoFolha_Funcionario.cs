@@ -67,8 +67,8 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
             return 0;
         }
 
-        public decimal RetornaTotalAReceber(decimal valorHora, int quantidadeHorasTrabalhadas) =>
-            (decimal)(valorHora * quantidadeHorasTrabalhadas);
+        public decimal RetornaTotalAReceber(decimal valorHora, int quantidadeHorasTrabalhadasDia) =>
+            (decimal)(valorHora * quantidadeHorasTrabalhadasDia);
 
         public int RetornaQuantidadeTotalHorasTrabalhadasFuncionario(List<RegistroPontoDto> registrosDoFuncionario)
         {
@@ -79,6 +79,10 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
             }
             return totalHoras;
         }
+
+        public int RetornaQuantidadeHorasTrabalhadasDia(RegistroPontoDto registroPontoDto) =>
+            Convert.ToInt32((registroPontoDto.HoraSaida.TotalHours - registroPontoDto.HoraEntrada.TotalHours) - (registroPontoDto.HoraSaidaAlmoco.TotalHours - registroPontoDto.HoraEntradaAlmoco.TotalHours));
+
 
     }
 }

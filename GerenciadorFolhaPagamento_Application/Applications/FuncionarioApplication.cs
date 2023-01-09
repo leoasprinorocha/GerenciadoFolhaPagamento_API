@@ -37,16 +37,16 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
         public async Task SalvarFuncionario(NovoFuncionarioDto novoFuncionario)
         {
-            _unitOfWork.BeginTransaction();
+            
 
             List<int> listaFuncionariosJaExistentes = await _funcionarioRepository.RecuperaOsCodigosDeTodosOsFuncionarios();
-            Funcionario novoFuncionarioASerCadastrado = _funcionarioBuilder.VerificaSeFuncionarioJaExiste(novoFuncionario.IdFuncionario, listaFuncionariosJaExistentes, novoFuncionario.NomeFuncionario, novoFuncionario.ValorHora, novoFuncionario.IdDepartamento)
+            Funcionario novoFuncionarioASerCadastrado = _funcionarioBuilder.VerificaSeFuncionarioJaExiste(novoFuncionario.CodigoRegistroFuncionario, listaFuncionariosJaExistentes, novoFuncionario.NomeFuncionario, novoFuncionario.ValorHora, novoFuncionario.IdDepartamento)
                                             .Build();
 
             if (novoFuncionarioASerCadastrado != null)
             {
                 await _funcionarioRepository.SalvaNovoFuncionario(novoFuncionarioASerCadastrado);
-                _unitOfWork.Commit();
+               
             }
         }
     }

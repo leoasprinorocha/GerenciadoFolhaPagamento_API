@@ -21,11 +21,19 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
         public async Task<List<int>> RecuperaOsCodigosDeTodosOsFuncionarios()
         {
             var transactional = _session.Transaction;
-            SqlCommand sqlCommand = new SqlCommand("SELECT IdFuncionario FROM Funcionario", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
-            using (var listaParametros = await sqlCommand.ExecuteReaderAsync())
+            SqlCommand sqlCommand = new SqlCommand("SELECT CodigoRegistroFuncionario FROM Funcionario", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
+            List<int> listaCodigos = new List<int>();
+            using (var codigos = await sqlCommand.ExecuteReaderAsync())
             {
-                return HelpersRepository.DataReaderMapToList<int>(listaParametros);
+                while (codigos.Read())
+                {
+                    listaCodigos.Add((int)codigos.GetValue(codigos.GetOrdinal("CodigoRegistroFuncionario")));
+                }
+
+
             }
+
+            return listaCodigos;
         }
 
         public async Task<List<FuncionarioDto>> RecuperaTodosFuncionarios()
@@ -40,9 +48,15 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
 
         public async Task SalvaNovoFuncionario(Funcionario novoFuncionario)
         {
-            var parameters = new { IdDepartamento = novoFuncionario.Departamento_idDepartamento, NomeFuncionario = novoFuncionario.NomeFuncionario, ValorHora = novoFuncionario.ValorHora };
-            string sqlCommand = @"INSERT INTO Funcionario(Departamento_idDepartamento, NomeFuncionario, ValorHora) 
-                                 VALUES(@IdDepartamento, @NomeFuncionario, @ValorHora)";
+            var parameters = new
+            {
+                IdDepartamento = novoFuncionario.Departamento_idDepartamento,
+                NomeFuncionario = novoFuncionario.NomeFuncionario,
+                ValorHora = novoFuncionario.ValorHora,
+                CodigoRegistroFuncionario = novoFuncionario.CodigoRegistroFuncionario
+            };
+            string sqlCommand = @"INSERT INTO Funcionario(Departamento_idDepartamento, NomeFuncionario, ValorHora, CodigoRegistroFuncionario) 
+                                 VALUES(@IdDepartamento, @NomeFuncionario, @ValorHora, @CodigoRegistroFuncionario)";
 
             await _session.Connection.ExecuteAsync(sqlCommand, parameters, _session.Transaction);
         }

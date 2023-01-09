@@ -8,5 +8,6 @@ namespace GerenciadorFolhaPagamento_Domain.Dtos
         public decimal ValorHora{ get; set; }
         public int IdDepartamento{ get; set; }
         public int IdFuncionario{ get; set; }
+        public int CodigoRegistroFuncionario{ get; set; }
     }
 }

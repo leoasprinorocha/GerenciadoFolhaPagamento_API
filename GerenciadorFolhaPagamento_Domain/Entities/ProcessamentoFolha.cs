@@ -14,6 +14,7 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
         public int Departamento_idDepartamento { get; set; }
 
         public string MesVigencia { get; set; }
+        public string AnoVigencia{ get; set; }
 
         public decimal? TotalPagamentos { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace GerenciadoFolhaPagamento_API.Controllers
@@ -26,11 +27,28 @@ namespace GerenciadoFolhaPagamento_API.Controllers
 
         [HttpPost]
         [Route("ExecutaProcessamento")]
-        public async Task<IActionResult> ExecutaProcessamento(){
-            await _processamentoFolhaApplication.IniciaProcessamento();
-            return Ok(new { Resposta = "Arquivos processados com sucesso!" });
-        } 
-        
+        public IActionResult ExecutaProcessamento()
+        {
+            Task.Run(() => _processamentoFolhaApplication.IniciaProcessamento());
+            return Ok(new { Resposta = "Processamento iniciado com sucesso!" });
+        }
+
+        [HttpGet]
+        [Route("RetornaArquivosQueEstaoNaPastaDeProcessamento")]
+        public async Task<IActionResult> RetornaArquivosQueEstaoNaPastaDeProcessamento()
+        {
+            var listaArquivos = await _processamentoFolhaApplication.RetornaArquivosQueEstaoNaPastaDeProcessamento();
+            return Ok(listaArquivos);
+        }
+
+        [HttpGet]
+        [Route("RetornaDepartamentosProcessados")]
+        public async Task<IActionResult> RetornaDepartamentosProcessados()
+        {
+            var listaDepartamentosProcessados = await _processamentoFolhaApplication.RetornaTodosOsProcessamentos();
+            return Ok(JsonConvert.SerializeObject(listaDepartamentosProcessados).ToString());
+        }
+
 
     }
 }

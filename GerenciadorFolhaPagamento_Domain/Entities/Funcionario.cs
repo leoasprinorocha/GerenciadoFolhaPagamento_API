@@ -14,6 +14,7 @@ namespace GerenciadorFolhaPagamento_Domain.Entities
         public int IdFuncionario { get; set; }
 
         public int Departamento_idDepartamento { get; set; }
+        public int CodigoRegistroFuncionario{ get; set; }
 
         public string NomeFuncionario { get; set; }
 

@@ -39,7 +39,7 @@ namespace GerenciadorFolhaPagamento_Application.Applications
 
         public async Task SalvaNovoParametro(List<NovoParametroDto> novosParametrosDto)
         {
-            _unitOfWork.BeginTransaction();
+            
             await CarregaParametros();
             foreach (var parametro in novosParametrosDto)
             {
@@ -52,7 +52,6 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                 else
                     await _parametrosRepository.AtualizaValorParametro(novoParametroASerCadastrado);
 
-                _unitOfWork.Commit();
 
             }
         }

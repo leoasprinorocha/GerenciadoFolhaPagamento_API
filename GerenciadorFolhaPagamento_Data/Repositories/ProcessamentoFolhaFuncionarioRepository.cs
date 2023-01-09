@@ -2,10 +2,6 @@
 using GerenciadorFolhaPagamento_Domain.Entities;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Repositories;
 using GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GerenciadorFolhaPagamento_Data.Repositories
@@ -38,21 +34,21 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                                    ,Funcionario_idFuncionario
                                    ,ProcessamentoFolha_idProcessamentoFolha
                                    ,TotalAReceber
-                                   ,HorasExtras
-                                   ,HorasDebito
                                    ,DiasFalta
                                    ,DiasExtras
-                                   ,DiasTrabalhados)
+                                   ,DiasTrabalhados
+                                   ,HorasExtras
+                                   ,HorasDebito)
                                  VALUES
                                     (@idDepartamento,
                                      @idFuncionario,
                                      @idProcessamentoFolha,
                                      @totalReceber,
-                                     @horasExtras,
-                                     @horasDebito,
                                      @diasFalta,
                                      @diasExtras,
-                                     @diasTrabalhados)";
+                                     @diasTrabalhados,
+                                     @horasExtras,
+                                     @horasDebito)";
 
             await _session.Connection.ExecuteScalarAsync(sqlCommand, parameters, _session.Transaction);
         }

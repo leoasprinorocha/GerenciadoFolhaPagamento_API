@@ -12,6 +12,12 @@ namespace GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig
 
         public void BeginTransaction()
         {
+            if (_session.Connection.State == 0)
+            {
+                _session.OpenConnection();
+            }
+
+
             _session.Transaction = _session.Connection.BeginTransaction();
         }
 
