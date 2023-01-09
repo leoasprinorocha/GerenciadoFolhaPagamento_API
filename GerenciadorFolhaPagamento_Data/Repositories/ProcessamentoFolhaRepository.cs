@@ -5,6 +5,7 @@ using GerenciadorFolhaPagamento_Domain.Dtos;
 using GerenciadorFolhaPagamento_Domain.Entities;
 using GerenciadorFolhaPagamento_Domain.Interfaces.Repositories;
 using GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -32,8 +33,7 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                                                       procFolha.MesVigencia, 
                                                       procFolha.AnoVigencia, 
                                                       procFolha.TotalPagamentos As TotalPagar, 
-                                                      procFolha.TotalDescontos, 
-                                                      procFolha.TotalExtras, 
+                                                      procFolha.TotalDescontos,  
                                                       procFolha.IdProcessamentoFolha 
                                                     FROM 
                                                       ProcessamentoFolha procFolha 
@@ -56,12 +56,14 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                                 Total.DiasFalta, 
                                 Total.DiasExtras, 
                                 Total.DiasTrabalhados,
-                                Total.IdProcessamentoFolha
+                                Total.IdProcessamentoFolha,
+                                Total.ValorHora
                             FROM 
                                 (
                                 SELECT 
                                     func.NomeFuncionario as Nome, 
-                                    func.CodigoRegistroFuncionario As Codigo, 
+                                    func.CodigoRegistroFuncionario As Codigo,
+                                    func.ValorHora as ValorHora,
                                     (
                                     SELECT 
                                         SUM(proceFunc.TotalAReceber) 
@@ -109,9 +111,11 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                 }
             }
 
+
             foreach (var departamento in departamentosProcessados)
             {
                 departamento.Funcionarios = funcionariosProcessados.Where(c => c.IdProcessamentoFolha == departamento.IdProcessamentoFolha).ToList();
+                departamento.TotalExtras = funcionariosProcessados.Where(c => c.IdProcessamentoFolha == departamento.IdProcessamentoFolha).ToList().Sum(x => x.ValorHora * Convert.ToDecimal(x.HorasExtras));
             }
 
 
