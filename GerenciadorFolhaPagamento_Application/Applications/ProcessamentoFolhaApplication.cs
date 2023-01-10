@@ -66,48 +66,61 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                     var listaDeRegistros = RetornaListaDeRegistroDoArquivo(arquivo.FullName);
                     var objetoComPropriedasTotais = processamentoFolha.RetornaObjetoComPropriedadesTotais(listaDeRegistros, departamentoProcessado.MesVigencia, departamentoProcessado.AnoVigencia);
                     var quantidadeDiasUteisMes = processamentoFolha.RetornaQuantidadeDeDiasUteisDoMes(departamentoProcessado.MesVigencia, departamentoProcessado.AnoVigencia);
+                    var quantidadeHorasEsperadasNoMes = quantidadeDiasUteisMes * processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia;
 
                     processamentoFolha.Departamento_idDepartamento = idDepartamentoSalvo;
                     processamentoFolha.MesVigencia = departamentoProcessado.MesVigencia;
                     processamentoFolha.TotalPagamentos = objetoComPropriedasTotais.TotalPagamentos;
                     processamentoFolha.TotalDescontos = objetoComPropriedasTotais.TotalDescontos;
-                    processamentoFolha.TotalExtras = objetoComPropriedasTotais.TotalHorasExtras;
+                    processamentoFolha.TotalExtras = objetoComPropriedasTotais.TotalExtras;
                     processamentoFolha.AnoVigencia = departamentoProcessado.AnoVigencia;
                     var idProcessamentoFolha = SalvaProcessamentoFolha(processamentoFolha).Result;
 
+                    List<List<RegistroPontoDto>> matrizOrdenadaPorFuncionarios = listaDeRegistros.GroupBy(x => new { x.CodigoFuncionario })
+                      .Select(grp => grp.ToList()).ToList();
 
-                    foreach (var registroPontoFuncionario in listaDeRegistros)
+
+                    foreach (var funcionarios in matrizOrdenadaPorFuncionarios)
                     {
                         ProcessamentoFolha_Funcionario processamentoFolha_Funcionario = new ProcessamentoFolha_Funcionario();
                         processamentoFolha_Funcionario.Funcionario_Departamento_idDepartamento = idDepartamentoSalvo;
-                        processamentoFolha_Funcionario.Funcionario_idFuncionario = registroPontoFuncionario.CodigoFuncionario;
+                        processamentoFolha_Funcionario.Funcionario_idFuncionario = funcionarios.First().CodigoFuncionario;
                         processamentoFolha_Funcionario.IdProcessamentoFolhaFuncionario = idProcessamentoFolha;
 
                         NovoFuncionarioDto novoFuncionarioDto = new NovoFuncionarioDto()
                         {
-                            NomeFuncionario = registroPontoFuncionario.Nome,
-                            ValorHora = registroPontoFuncionario.ValorHora,
+                            NomeFuncionario = funcionarios.First().Nome,
+                            ValorHora = funcionarios.First().ValorHora,
                             IdDepartamento = idDepartamentoSalvo,
-                            CodigoRegistroFuncionario = registroPontoFuncionario.CodigoFuncionario
+                            CodigoRegistroFuncionario = funcionarios.First().CodigoFuncionario
                         };
 
                         _funcionarioApplication.SalvarFuncionario(novoFuncionarioDto).Wait();
 
 
-                        int horasTrabalhadasMes = processamentoFolha_Funcionario.
-                                                  RetornaQuantidadeTotalHorasTrabalhadasFuncionario(listaDeRegistros.Where(c => c.CodigoFuncionario == registroPontoFuncionario.CodigoFuncionario).ToList());
 
-                        int horasTrabalhadasDia = processamentoFolha_Funcionario.RetornaQuantidadeHorasTrabalhadasDia(registroPontoFuncionario);
+                        foreach (var registroPontoFuncionario in funcionarios)
+                        {
+                            int horasTrabalhadasMes = processamentoFolha_Funcionario.
+                                                      RetornaQuantidadeTotalHorasTrabalhadasFuncionario(funcionarios.ToList());
 
-                        processamentoFolha_Funcionario.TotalAReceber = processamentoFolha_Funcionario.RetornaTotalAReceber(registroPontoFuncionario.ValorHora, horasTrabalhadasDia);
-                        processamentoFolha_Funcionario.HorasExtras = horasTrabalhadasDia > processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia ? (horasTrabalhadasDia - processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia) : 0;
-                        processamentoFolha_Funcionario.HorasDebito = processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia > horasTrabalhadasDia ? (processamentoFolha.QuantidadeDeHorasTrabalhadasEsperadaDia - horasTrabalhadasDia) : 0;
+                            if (funcionarios.IndexOf(registroPontoFuncionario) == funcionarios.Count - 1)
+                            {
+                                processamentoFolha_Funcionario.DiasFalta = processamentoFolha_Funcionario.RetornaQuantidadeDeDiasFaltantesMes(quantidadeDiasUteisMes, funcionarios.Count);
+                                processamentoFolha_Funcionario.DiasExtras = processamentoFolha_Funcionario.RetornaQuantidadeDiasExtrasMes(quantidadeDiasUteisMes, funcionarios.Count);
+                                processamentoFolha_Funcionario.DiasTrabalhados = funcionarios.Count();
+                                processamentoFolha_Funcionario.TotalAReceber = (decimal)horasTrabalhadasMes * registroPontoFuncionario.ValorHora;
+                                processamentoFolha_Funcionario.HorasExtras = 0;
+                                processamentoFolha_Funcionario.HorasDebito = 0;
 
-                        int quantidadeDiasTrabalhadosMes = listaDeRegistros.Where(c => c.CodigoFuncionario == registroPontoFuncionario.CodigoFuncionario).Count();
+                                if (horasTrabalhadasMes < quantidadeHorasEsperadasNoMes)
+                                    processamentoFolha_Funcionario.HorasDebito = quantidadeHorasEsperadasNoMes - horasTrabalhadasMes;
+                                else if (horasTrabalhadasMes > quantidadeHorasEsperadasNoMes)
+                                    processamentoFolha_Funcionario.HorasExtras = horasTrabalhadasMes - quantidadeHorasEsperadasNoMes;
+                            }
 
-                        processamentoFolha_Funcionario.DiasFalta = -(processamentoFolha_Funcionario.RetornaQuantidadeDeDiasFaltantesMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes));
-                        processamentoFolha_Funcionario.DiasExtras = processamentoFolha_Funcionario.RetornaQuantidadeDiasExtrasMes(quantidadeDiasUteisMes, quantidadeDiasTrabalhadosMes);
-                        processamentoFolha_Funcionario.DiasTrabalhados = quantidadeDiasTrabalhadosMes;
+                        }
+
                         _processamentoFolhaFuncionarioApplication.SalvaProcessamentoFolhaFuncionario(processamentoFolha_Funcionario).Wait();
                     }
                 }
@@ -154,6 +167,7 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                 var horaSaidaAux = Convert.ToDateTime(planilha.Cell($"F{l}").Value.ToString());
                 var horaEntradaAlmocoAux = planilha.Cell($"G{l}").Value.ToString().Substring(0, 5);
                 var horaSaidaAlmocoAux = planilha.Cell($"G{l}").Value.ToString().Substring(8, 5);
+                var dataRegistro = DateTime.Parse(planilha.Cell($"D{l}").Value.ToString().Trim());
 
 
                 RegistroPontoDto registro = new RegistroPontoDto()
@@ -161,7 +175,7 @@ namespace GerenciadorFolhaPagamento_Application.Applications
                     CodigoFuncionario = int.Parse(planilha.Cell($"A{l}").Value.ToString()),
                     Nome = planilha.Cell($"B{l}").Value.ToString(),
                     ValorHora = decimal.Parse(planilha.Cell($"C{l}").Value.ToString().Replace("R$", "").Replace(" ", "")),
-                    DataRegistro = DateTime.Parse(planilha.Cell($"D{l}").Value.ToString().Trim()),
+                    DataRegistro = dataRegistro,
                     HoraEntrada = TimeSpan.Parse(horaEntradaAux.ToString("HH:mm").Trim()),
                     HoraSaida = TimeSpan.Parse(horaSaidaAux.ToString("HH:mm").Trim()),
                     HoraEntradaAlmoco = TimeSpan.Parse(horaEntradaAlmocoAux.Trim()),

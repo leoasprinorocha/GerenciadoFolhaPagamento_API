@@ -1,7 +1,7 @@
 ﻿using GerenciadorFolhaPagamento_Domain.Interfaces.Applications;
-using GerenciadorFolhaPagamento_Infrastructure.DbSessionManagerConfig;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Threading.Tasks;
 
 namespace GerenciadoFolhaPagamento_API.Controllers
@@ -10,18 +10,15 @@ namespace GerenciadoFolhaPagamento_API.Controllers
     [Route("[controller]")]
     public class ProcessamentosController : ControllerBase
     {
-        private readonly IFuncionarioApplication _funcionarioApplication;
         private readonly IDepartamentoApplication _departamentoApplication;
         private readonly IProcessamentoFolhaApplication _processamentoFolhaApplication;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public ProcessamentosController(IFuncionarioApplication funcionarioApplication, IDepartamentoApplication departamentoApplication, 
-                                        IProcessamentoFolhaApplication processamentoFolhaApplication, IUnitOfWork unitOfWork)
+        public ProcessamentosController(IDepartamentoApplication departamentoApplication,
+                                        IProcessamentoFolhaApplication processamentoFolhaApplication)
         {
-            _funcionarioApplication = funcionarioApplication;
+
             _departamentoApplication = departamentoApplication;
             _processamentoFolhaApplication = processamentoFolhaApplication;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -49,8 +46,16 @@ namespace GerenciadoFolhaPagamento_API.Controllers
         [Route("RetornaDepartamentosProcessados")]
         public async Task<IActionResult> RetornaDepartamentosProcessados()
         {
-            var listaDepartamentosProcessados = await _processamentoFolhaApplication.RetornaTodosOsProcessamentos();
-            return Ok(JsonConvert.SerializeObject(listaDepartamentosProcessados).ToString());
+            try
+            {
+                var listaDepartamentosProcessados = await _processamentoFolhaApplication.RetornaTodosOsProcessamentos();
+                return Ok(JsonConvert.SerializeObject(listaDepartamentosProcessados).ToString());
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
         [HttpPost]

@@ -8,6 +8,7 @@ namespace GerenciadorFolhaPagamento_Domain.Dtos
         public int TotalHorasTrabalhadas { get; set; }
         public decimal TotalDescontos { get; set; }
         public int TotalHorasExtras { get; set; }
+        public decimal TotalExtras { get; set; }
         public int TotalHorasNegativas { get; set; }
         public int TotalHorasEsperadasMes { get; set; }
     }

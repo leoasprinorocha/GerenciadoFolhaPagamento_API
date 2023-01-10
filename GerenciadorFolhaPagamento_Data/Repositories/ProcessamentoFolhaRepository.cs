@@ -46,7 +46,8 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                                                       procFolha.AnoVigencia, 
                                                       procFolha.TotalPagamentos As TotalPagar, 
                                                       procFolha.TotalDescontos,  
-                                                      procFolha.IdProcessamentoFolha 
+                                                      procFolha.IdProcessamentoFolha,
+                                                      procFolha.TotalExtras As TotalExtas
                                                     FROM 
                                                       ProcessamentoFolha procFolha 
                                                       inner join Departamento dep on procFolha.Departamento_idDepartamento = dep.IdDepartamento", (SqlConnection)_session.Connection, (SqlTransaction)transactional);
@@ -70,45 +71,24 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                                 Total.DiasTrabalhados,
                                 Total.IdProcessamentoFolha,
                                 Total.ValorHora
-                            FROM 
+                                FROM 
                                 (
                                 SELECT 
-                                    func.NomeFuncionario as Nome, 
-                                    func.CodigoRegistroFuncionario As Codigo,
-                                    func.ValorHora as ValorHora,
-                                    (
-                                    SELECT 
-                                        SUM(proceFunc.TotalAReceber) 
-                                    from 
-                                        ProcessamentoFolha_Funcionario as proceFunc 
-                                    WHERE 
-                                        proceFunc.Funcionario_idFuncionario = procFuncionario.Funcionario_idFuncionario
-                                    ) as TotalReceber, 
-                                    (
-                                    SELECT 
-                                        SUM(proceFunc.HorasExtras) 
-                                    from 
-                                        ProcessamentoFolha_Funcionario as proceFunc 
-                                    WHERE 
-                                        proceFunc.Funcionario_idFuncionario = procFuncionario.Funcionario_idFuncionario
-                                    ) as HorasExtras, 
-                                    (
-                                    SELECT 
-                                        SUM(proceFunc.HorasDebito) 
-                                    from 
-                                        ProcessamentoFolha_Funcionario as proceFunc 
-                                    WHERE 
-                                        proceFunc.Funcionario_idFuncionario = procFuncionario.Funcionario_idFuncionario
-                                    ) as HorasDebito, 
-                                    procFuncionario.DiasFalta, 
-                                    procFuncionario.DiasExtras, 
-                                    procFuncionario.DiasTrabalhados,
-                                    procFuncionario.ProcessamentoFolha_idProcessamentoFolha as IdProcessamentoFolha
+                                func.NomeFuncionario as Nome, 
+                                func.CodigoRegistroFuncionario As Codigo,
+                                func.ValorHora as ValorHora,
+                                procFunc.TotalAReceber as TotalReceber,
+                                procFunc.HorasExtras, 
+                                procFunc.HorasDebito, 
+                                procFunc.DiasFalta, 
+                                procFunc.DiasExtras, 
+                                procFunc.DiasTrabalhados,
+                                procFunc.ProcessamentoFolha_idProcessamentoFolha as IdProcessamentoFolha
                                 FROM 
-                                    ProcessamentoFolha_Funcionario procFuncionario 
-                                    inner join Funcionario func on procFuncionario.Funcionario_idFuncionario = func.CodigoRegistroFuncionario 
+                                ProcessamentoFolha_Funcionario procFunc 
+                                inner join Funcionario func on procFunc.Funcionario_idFuncionario = func.CodigoRegistroFuncionario 
                                 WHERE 
-                                    procFuncionario.ProcessamentoFolha_idProcessamentoFolha in({idProcessamentoFolha})
+                                procFunc.ProcessamentoFolha_idProcessamentoFolha in({idProcessamentoFolha})
                                 ) as Total";
 
             SqlCommand sqlCommandSubQuery = new SqlCommand(sqlQuery, (SqlConnection)_session.Connection, (SqlTransaction)transactional);
@@ -123,13 +103,10 @@ namespace GerenciadorFolhaPagamento_Data.Repositories
                 }
             }
 
-
             foreach (var departamento in departamentosProcessados)
             {
                 departamento.Funcionarios = funcionariosProcessados.Where(c => c.IdProcessamentoFolha == departamento.IdProcessamentoFolha).ToList();
-                departamento.TotalExtras = funcionariosProcessados.Where(c => c.IdProcessamentoFolha == departamento.IdProcessamentoFolha).ToList().Sum(x => x.ValorHora * Convert.ToDecimal(x.HorasExtras));
             }
-
 
             return departamentosProcessados;
         }
